@@ -1,6 +1,8 @@
 import React from "react";
 import PropTypes from "prop-types";
 
+var dbg = console.log.bind(console, "DBG: ");
+
 // Cell Class
 export class Cell extends React.Component {
   getValue() {
@@ -9,19 +11,21 @@ export class Cell extends React.Component {
     if (!value.isRevealed) {
       return this.props.value.isFlagged ? "🚩" : null;
     }
-    if (value.isMine) {
+    else if (value.isMine) {
       return "💣";
     }
-    if (value.neighbour === 0) {
+    else if (value.neighbourMinesNum === 0) {
       return null;
     }
-    return value.neighbour;
+    return value.neighbourMinesNum;
   }
 
   render() {
     const { value, onClick, cMenu } = this.props;
+    const cell_class = "cell " + (value.isRevealed ? "" : "hidden");
     return (
-      <div onClick={onClick} className="cell hidden" onContextMenu={cMenu}>
+      <div onClick={onClick} className={cell_class} onContextMenu={cMenu}>
+        {dbg("Drawing cell with value " + this.getValue())}
         {this.getValue()}
       </div>
     );
@@ -30,6 +34,9 @@ export class Cell extends React.Component {
 
 // Type checking With PropTypes
 const cellItemShape = {
+  i: PropTypes.numer,
+  j: PropTypes.numer,
+  neighbourMinesNum: PropTypes.numer,
   isRevealed: PropTypes.bool,
   isMine: PropTypes.bool,
   isFlagged: PropTypes.bool,
