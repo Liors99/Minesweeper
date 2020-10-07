@@ -41,52 +41,50 @@ export class Board extends React.Component {
     dbg("Clicked on cell " + i + "," + j);
 
 
-    //Gets the neighbours (all around) of a cell in position i,j
-    let getNeighbourCells = (i, j, data) => {
+    //Gets the neighbours (all around) of a cell in position i,j uses a GENERATOR
+    function* getNeighbourCells(i, j, data) {
       let temp_data = data;
-      let neighbours = [];
 
       //Check left and make sure we are not in the left most side
       if (j !== 0) {
-        neighbours.push(temp_data[i][j - 1]);
+        yield temp_data[i][j - 1];
       }
 
       //Check top left and make sure we are not in the the left most side and not at the top
       if (j !== 0 && i !== 0) {
-        neighbours.push(temp_data[i - 1][j - 1]);
+        yield temp_data[i - 1][j - 1];
       }
 
       //Check up and make sure we are not at the top
       if (i !== 0) {
-        neighbours.push(temp_data[i - 1][j]);
+        yield temp_data[i - 1][j];
       }
 
       //Check top right and make sure we are not in the the right most side and not at the top
       if (i !== 0 && j !== temp_data[i].length - 1) {
-        neighbours.push(temp_data[i - 1][j + 1]);
+        yield temp_data[i - 1][j + 1];
       }
 
       //Check right and make sure we are not in the right most side
       if (j !== temp_data[i].length - 1) {
-        neighbours.push(temp_data[i][j + 1]);
+        yield temp_data[i][j + 1];
       }
 
       //Check bottom right and make sure we are not in the the right most side and not at the bottom
       if (i !== temp_data.length - 1 && j !== temp_data[i].length - 1) {
-        neighbours.push(temp_data[i + 1][j + 1]);
+        yield temp_data[i + 1][j + 1];
       }
 
       //Check down and make sure we are not at the bottom
       if (i !== temp_data.length - 1) {
-        neighbours.push(temp_data[i + 1][j]);
+        yield temp_data[i + 1][j];
       }
 
       //Check bottom left and make sure we are not in the the left most side and not at the bottom
       if (i !== temp_data.length - 1 && j !== 0) {
-        neighbours.push(temp_data[i + 1][j - 1]);
+        yield temp_data[i + 1][j - 1];
       }
 
-      return neighbours;
 
     }
 
