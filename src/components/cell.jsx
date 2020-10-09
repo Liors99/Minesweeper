@@ -22,12 +22,19 @@ export class Cell extends React.Component {
 
   render() {
     const { value, onClick, cMenu } = this.props;
-    const cell_class = "cell " + (value.isRevealed ? "" : "hidden");
+    const cell_class = "cell-content " + (value.isRevealed ? "" : "hidden");
     return (
-      <div onClick={onClick} className={cell_class} onContextMenu={cMenu}>
-        {dbg("Drawing cell with value " + this.getValue())}
-        {this.getValue()}
-      </div>
+      <td onClick={onClick} className="cell" onContextMenu={cMenu}>
+        <div className={cell_class}>
+          <div className="innerTable">
+            <div className="innerTable-cell">
+              {this.getValue()}
+            </div>
+          </div>
+
+        </div>
+
+      </td>
     );
   }
 }

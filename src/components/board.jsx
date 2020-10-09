@@ -14,6 +14,18 @@ export class Board extends React.Component {
     isFirstClick: true,
   };
 
+  componentDidUpdate(prevProps) {
+    if (prevProps !== this.props) {
+      dbg("Current height: " + this.props.height);
+      this.setState({
+        boardData: this.initializeData(this.props.height, this.props.width),
+        gameStatus: "Game in progress",
+        mineCount: this.props.mines,
+        isFirstClick: true,
+      });
+    }
+  }
+
   initializeData(height, width) {
     let data = [];
 
@@ -99,7 +111,7 @@ export class Board extends React.Component {
       }
 
       let mines_planted = 0;
-      while (mines_planted < this.state.mineCount) {
+      while (mines_planted < this.props.mines) {
         //Generate random i and j
         let i_mine = getRandomIntInclusive(0, temp_data.length - 1);
         let j_mine = getRandomIntInclusive(0, temp_data[0].length - 1);
@@ -144,13 +156,15 @@ export class Board extends React.Component {
       //If it is a mine or has already been revealed, "skip"
       if (data[i][j].isMine || data[i][j].isRevealed) {
       }
-      //If it has a number on it, reveal it, but nothing else beside it
+      //If it has a number on it, reveal it, but nothing else beside it and make sure it is no longer flagged
       else if (data[i][j].neighbourMinesNum > 0) {
         data[i][j].isRevealed = true;
+        data[i][j].isFlagged = false;
       }
-      //If it is empty, reveal it, and get its neighbours and continue the process recursively
+      //If it is empty, reveal it, and get its neighbours and continue the process recursively and remove the flag attribute
       else {
         data[i][j].isRevealed = true;
+        data[i][j].isFlagged = false;
         for (let neighbour of getNeighbourCells(i, j, temp_data)) {
           revealArea(neighbour.i, neighbour.j, data);
         }
@@ -167,6 +181,20 @@ export class Board extends React.Component {
       }
 
       return data;
+    }
+
+    let getFlagsNum = (data) => {
+      let num = 0;
+
+      for (let i = 0; i < data.length; i++) {
+        for (let j = 0; j < data[i].length; j++) {
+          if (data[i][j].isFlagged) {
+            num++;
+          }
+        }
+      }
+
+      return num;
     }
 
     //When we click on a cell for the first time, we need to populate the mines and assign numbers to cells
@@ -188,8 +216,9 @@ export class Board extends React.Component {
       temp_data = revealBoard(temp_data);
     }
 
-    //TODO: Update the board (and render)
-    this.setState({ boardData: temp_data });
+    let mines_remain = this.props.mines - getFlagsNum(temp_data);
+    //Update the board (and render)
+    this.setState({ boardData: temp_data, mineCount: mines_remain });
 
 
 
@@ -198,18 +227,21 @@ export class Board extends React.Component {
 
   handleRightClickCell(e, i, j, data) {
     e.preventDefault();
+    let mines_remain = this.state.mineCount;
 
     if (!data[i][j].isRevealed) {
       if (data[i][j].isFlagged) {
         data[i][j].isFlagged = false;
+        mines_remain++;
       }
       else {
         data[i][j].isFlagged = true;
+        mines_remain--;
       }
     }
 
     //Update board data
-    this.setState({ boardData: data });
+    this.setState({ boardData: data, mineCount: mines_remain });
 
   }
 
@@ -217,28 +249,34 @@ export class Board extends React.Component {
 
     let renderTable = (data) => {
       let temp_data = data;
+      let perc_width;
 
       let rows = [];
       for (let i = 0; i < temp_data.length; i++) {
         let cell = [];
         for (let j = 0; j < temp_data[i].length; j++) {
-          cell.push(<td key={"r" + i + "c" + j}>
+          perc_width = (1 / temp_data.length) * 100;
+          cell.push(
             <Cell
               onClick={() => this.handleLeftClickCell(i, j)}
               cMenu={(e) => this.handleRightClickCell(e, i, j, temp_data)}
               value={temp_data[i][j]}
             />
-          </td>)
+          )
         }
-        rows.push(<tr key={"r" + i}>{cell}</tr>)
+        rows.push(<tr key={"r" + i}> {cell}</tr>)
       }
 
       return (
-        <table id="game-board">
-          <tbody>
+        <div className="container">
+          <table className="table table-borderless" id="game-board">
             {rows}
-          </tbody>
-        </table>
+          </table>
+        </div>
+
+
+
+
       );
     }
 
@@ -246,11 +284,9 @@ export class Board extends React.Component {
       <div className="board">
         <div className="game-info">
           <h1 className="info">{this.state.gameStatus}</h1>
-          <span className="info">Mines remaining: {this.state.mineCount}</span>
         </div>
-
         {renderTable(this.state.boardData)}
-
+        <span className="info">Mines remaining: {this.state.mineCount}</span>
       </div>
     );
   }
