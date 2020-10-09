@@ -33,7 +33,6 @@ body {
 
 
 .cell {
-  cursor: pointer;
   position: relative;
   text-align: center;
   vertical-align: middle;
@@ -62,6 +61,7 @@ body {
   height:100%;
   width:100%;
 }
+
 .innerTable-cell{
   display:table-cell;
   vertical-align:middle;
@@ -71,5 +71,6 @@ body {
 
 
 .hidden {
+  cursor: pointer;
   background: #333333;
 }

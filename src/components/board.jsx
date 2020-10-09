@@ -9,7 +9,6 @@ var dbg = console.log.bind(console, "DBG: ");
 export class Board extends React.Component {
   state = {
     boardData: this.initializeData(this.props.height, this.props.width),
-    gameStatus: "Game in progress",
     mineCount: this.props.mines,
     isFirstClick: true,
   };
@@ -19,7 +18,6 @@ export class Board extends React.Component {
       dbg("Current height: " + this.props.height);
       this.setState({
         boardData: this.initializeData(this.props.height, this.props.width),
-        gameStatus: "Game in progress",
         mineCount: this.props.mines,
         isFirstClick: true,
       });
@@ -282,11 +280,12 @@ export class Board extends React.Component {
 
     return (
       <div className="board">
-        <div className="game-info">
-          <h1 className="info">{this.state.gameStatus}</h1>
-        </div>
+
         {renderTable(this.state.boardData)}
-        <span className="info">Mines remaining: {this.state.mineCount}</span>
+        <div className="game-info">
+          <span className="info">Mines remaining: {this.state.mineCount}</span>
+        </div>
+
       </div>
     );
   }
