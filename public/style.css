@@ -2,17 +2,17 @@ body {
   margin: 0px;
   font-family: sans-serif;
   background: rgb(100,81,19);
+}
 
+#root{
+  width: 100vw;
+  height: 100vh;
 }
 
 .game-info {
   margin-bottom: 20px;
-  background: transparent;
-  padding: 7px;
   text-align: center;
   color: rgb(255, 255, 255);
-  min-height: 100px;
-  border-radius: 7px;
 }
 
 .info {
@@ -20,15 +20,13 @@ body {
   margin-top: 15px;
 }
 
-
 #game-board{
   margin-left: auto;
   margin-right: auto;
   border-collapse: separate;
-}
 
-.board-container{
-  width: 60%;
+  width: 100%;
+  max-width: 90vh;
 }
 
 
@@ -38,6 +36,7 @@ body {
   vertical-align: middle;
   
 }
+
 
 .cell::after{
   content: '';
@@ -67,6 +66,9 @@ body {
   vertical-align:middle;
   height:100%;
   width:100%;
+  font-weight: bold;
+  font-size: 100%;
+  
 }
 
 

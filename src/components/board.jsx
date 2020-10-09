@@ -204,19 +204,20 @@ export class Board extends React.Component {
       //Set the state to false, so we don't go here again
       this.setState({ boardData: temp_data, isFirstClick: false });
     }
+    if (!temp_data[i][j].isRevealed) {
+      temp_data = revealArea(i, j, temp_data);
 
+      //Make sure we have not landed on a mine
+      if (temp_data[i][j].isMine) {
+        alert("Game over");
+        temp_data = revealBoard(temp_data);
+      }
 
-    temp_data = revealArea(i, j, temp_data);
-
-    //Make sure we have not landed on a mine
-    if (temp_data[i][j].isMine) {
-      alert("Game over");
-      temp_data = revealBoard(temp_data);
+      let mines_remain = this.props.mines - getFlagsNum(temp_data);
+      //Update the board (and render)
+      this.setState({ boardData: temp_data, mineCount: mines_remain });
     }
 
-    let mines_remain = this.props.mines - getFlagsNum(temp_data);
-    //Update the board (and render)
-    this.setState({ boardData: temp_data, mineCount: mines_remain });
 
 
 
@@ -266,20 +267,15 @@ export class Board extends React.Component {
       }
 
       return (
-        <div className="container">
-          <table className="table table-borderless" id="game-board">
-            {rows}
-          </table>
-        </div>
-
-
-
+        <table id="game-board">
+          {rows}
+        </table>
 
       );
     }
 
     return (
-      <div className="board">
+      <div>
 
         {renderTable(this.state.boardData)}
         <div className="game-info">
