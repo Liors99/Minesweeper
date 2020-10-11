@@ -1,6 +1,8 @@
 import React from "react";
 import { Cell } from "./cell";
+import { Menu } from "./menu";
 import PropTypes from "prop-types";
+
 
 
 var dbg = console.log.bind(console, "DBG: ");
@@ -11,15 +13,34 @@ export class Board extends React.Component {
     boardData: this.initializeData(this.props.height, this.props.width),
     mineCount: this.props.mines,
     isFirstClick: true,
+    clearCellsNum: (this.props.height * this.props.width) - this.props.mines,
+    gameStatus: { isGameOver: false, isWon: false },
+    originalProps: { height: this.props.height, width: this.props.width, mines: this.props.mines },
   };
+
+
+  restartGame() {
+
+    let old_props = this.state.originalProps;
+    this.setState({
+      boardData: this.initializeData(old_props.height, old_props.width),
+      mineCount: old_props.mines,
+      isFirstClick: true,
+      clearCellsNum: (old_props.height * old_props.width) - old_props.mines,
+      gameStatus: { isGameOver: false, isWon: false },
+    });
+
+  }
 
   componentDidUpdate(prevProps) {
     if (prevProps !== this.props) {
-      dbg("Current height: " + this.props.height);
       this.setState({
         boardData: this.initializeData(this.props.height, this.props.width),
         mineCount: this.props.mines,
         isFirstClick: true,
+        clearCellsNum: (this.props.height * this.props.width) - this.props.mines,
+        gameStatus: { isGameOver: false, isWon: false },
+        originalProps: { height: this.props.height, width: this.props.width, mines: this.props.mines },
       });
     }
   }
@@ -195,6 +216,20 @@ export class Board extends React.Component {
       return num;
     }
 
+    let isWon = (data) => {
+
+      let revealed_so_far = 0;
+
+      for (let i = 0; i < data.length; i++) {
+        for (let j = 0; j < data[i].length; j++) {
+          if (data[i][j].isRevealed) {
+            revealed_so_far++;
+          }
+        }
+      }
+      return this.state.clearCellsNum === revealed_so_far;
+    }
+
     //When we click on a cell for the first time, we need to populate the mines and assign numbers to cells
     if (this.state.isFirstClick) {
       //populate mines
@@ -204,18 +239,28 @@ export class Board extends React.Component {
       //Set the state to false, so we don't go here again
       this.setState({ boardData: temp_data, isFirstClick: false });
     }
+
     if (!temp_data[i][j].isRevealed) {
       temp_data = revealArea(i, j, temp_data);
+      let game_status = this.state.gameStatus;
 
-      //Make sure we have not landed on a mine
+      //Make sure we have not landed on a mine (if we did, it's game over)
       if (temp_data[i][j].isMine) {
-        alert("Game over");
+        game_status.isGameOver = true;
+        game_status.isWon = false;
         temp_data = revealBoard(temp_data);
+      }
+      //Check winning condition, by checking if we have discovered all empty cells
+      else if (isWon(temp_data)) {
+        game_status.isGameOver = true;
+        game_status.isWon = true;
       }
 
       let mines_remain = this.props.mines - getFlagsNum(temp_data);
       //Update the board (and render)
-      this.setState({ boardData: temp_data, mineCount: mines_remain });
+      this.setState({ boardData: temp_data, mineCount: mines_remain, gameStatus: game_status });
+
+
     }
 
 
@@ -226,6 +271,12 @@ export class Board extends React.Component {
 
   handleRightClickCell(e, i, j, data) {
     e.preventDefault();
+    this.placeFlag(i, j, data);
+
+  }
+
+  placeFlag(i, j, data) {
+    dbg("Placing FLAG at " + i + "," + j);
     let mines_remain = this.state.mineCount;
 
     if (!data[i][j].isRevealed) {
@@ -241,24 +292,22 @@ export class Board extends React.Component {
 
     //Update board data
     this.setState({ boardData: data, mineCount: mines_remain });
-
   }
 
   render() {
 
     let renderTable = (data) => {
       let temp_data = data;
-      let perc_width;
 
       let rows = [];
       for (let i = 0; i < temp_data.length; i++) {
         let cell = [];
         for (let j = 0; j < temp_data[i].length; j++) {
-          perc_width = (1 / temp_data.length) * 100;
           cell.push(
             <Cell
               onClick={() => this.handleLeftClickCell(i, j)}
               cMenu={(e) => this.handleRightClickCell(e, i, j, temp_data)}
+              onLongClick={() => this.placeFlag(i, j, temp_data)}
               value={temp_data[i][j]}
             />
           )
@@ -274,9 +323,19 @@ export class Board extends React.Component {
       );
     }
 
+    let renderOverlay = () => {
+      const status = this.state.gameStatus
+      if (status.isGameOver) {
+        return <Menu boardRestart={() => this.restartGame()} isWon={status.isWon} />
+      }
+      else {
+        return null;
+      }
+    }
+
     return (
       <div>
-
+        {renderOverlay()}
         {renderTable(this.state.boardData)}
         <div className="game-info">
           <span className="info">Mines remaining: {this.state.mineCount}</span>

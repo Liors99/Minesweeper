@@ -2,6 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 
 var dbg = console.log.bind(console, "DBG: ");
+let pressTimer;
 
 // Cell Class
 export class Cell extends React.Component {
@@ -20,11 +21,24 @@ export class Cell extends React.Component {
     return value.neighbourMinesNum;
   }
 
+  onPress() {
+    if (!pressTimer) {
+      pressTimer = setTimeout(() => { console.log("HOLDING"); this.props.onLongClick(); }, 500);
+    }
+  }
+
+  onRelease() {
+    if (pressTimer) {
+      clearTimeout(pressTimer);
+    }
+
+  }
+
   render() {
     const { value, onClick, cMenu } = this.props;
     const cell_class = "cell-content " + (value.isRevealed ? "" : "hidden");
     return (
-      <td onClick={onClick} className="cell" onContextMenu={cMenu}>
+      <td onClick={onClick} className="cell" onContextMenu={cMenu} onTouchStart={this.onPress.bind(this)} onTouchEnd={this.onRelease}>
         <div className={cell_class}>
           <div className="innerTable">
             <div className="innerTable-cell">

@@ -16,9 +16,10 @@ export class Game extends React.Component {
   render() {
     return (
       <div>
+
         <button onClick={() => this.changeDifficulty(9, 9, 10)}> Easy </button>
         <button onClick={() => this.changeDifficulty(16, 16, 40)}> Medium </button>
-        <button onClick={() => this.changeDifficulty(16, 30, 99)}> Hard </button>
+        <button onClick={() => this.changeDifficulty(22, 22, 99)}> Hard </button>
         <Board height={this.state.height} width={this.state.width} mines={this.state.mines} />
       </div>
 
