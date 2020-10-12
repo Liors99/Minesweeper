@@ -1,12 +1,46 @@
 body {
   margin: 0px;
   font-family: sans-serif;
-  background: rgb(100,81,19);
+  background: rgb(70, 70, 69);
 }
 
 #root{
   width: 100vw;
   height: 100vh;
+}
+
+.menu {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 0.5em;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.menuButton {
+  color: white;
+  padding: 5px 0.5em ;
+  border: 0px solid gray;
+  background-color: rgba(128, 128, 128, 0.233);
+  margin: 5px;
+  cursor: pointer;
+  border-radius: 0.5em;
+  font-size:1em;
+}
+
+.menuButton:hover {
+  color: white;
+  background: black;
+}
+
+#timer{
+  display: flex;
+  justify-content: center;
+  margin-bottom: 0.5em;
+  flex-wrap: wrap;
+  align-items: center;
+  color: white;
+  font-size: 16pt;
 }
 
 .game-info {
@@ -68,7 +102,7 @@ body {
   height:100%;
   width:100%;
   font-weight: bold;
-  font-size: 100%;
+  font-size: 1.5vh;
   
 
   /*Remove ability to select text, taken from https://stackoverflow.com/questions/826782/how-to-disable-text-selection-highlighting */

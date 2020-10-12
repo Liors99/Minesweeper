@@ -7,8 +7,13 @@ import PropTypes from "prop-types";
 
 var dbg = console.log.bind(console, "DBG: ");
 
+
+//Global variable for the timer
+let timer = null;
+
 // Board Class
 export class Board extends React.Component {
+
   state = {
     boardData: this.initializeData(this.props.height, this.props.width),
     mineCount: this.props.mines,
@@ -16,24 +21,28 @@ export class Board extends React.Component {
     clearCellsNum: (this.props.height * this.props.width) - this.props.mines,
     gameStatus: { isGameOver: false, isWon: false },
     originalProps: { height: this.props.height, width: this.props.width, mines: this.props.mines },
+    totalSeconds: 0,
   };
 
 
   restartGame() {
 
     let old_props = this.state.originalProps;
+    clearInterval(timer);
     this.setState({
       boardData: this.initializeData(old_props.height, old_props.width),
       mineCount: old_props.mines,
       isFirstClick: true,
       clearCellsNum: (old_props.height * old_props.width) - old_props.mines,
       gameStatus: { isGameOver: false, isWon: false },
+      totalSeconds: 0,
     });
 
   }
 
   componentDidUpdate(prevProps) {
     if (prevProps !== this.props) {
+      clearInterval(timer);
       this.setState({
         boardData: this.initializeData(this.props.height, this.props.width),
         mineCount: this.props.mines,
@@ -41,6 +50,7 @@ export class Board extends React.Component {
         clearCellsNum: (this.props.height * this.props.width) - this.props.mines,
         gameStatus: { isGameOver: false, isWon: false },
         originalProps: { height: this.props.height, width: this.props.width, mines: this.props.mines },
+        totalSeconds: 0,
       });
     }
   }
@@ -230,14 +240,23 @@ export class Board extends React.Component {
       return this.state.clearCellsNum === revealed_so_far;
     }
 
+    let updateTimer = () => {
+      let new_timer = this.state.totalSeconds + 1;
+
+      this.setState({ totalSeconds: new_timer });
+
+    }
+
     //When we click on a cell for the first time, we need to populate the mines and assign numbers to cells
     if (this.state.isFirstClick) {
       //populate mines
       temp_data = populateMines(i, j, temp_data);
       //assign numbers to cells
       temp_data = assignNumbers(temp_data);
+      //Update the global timer every second
+      timer = setInterval(updateTimer, 1000);
       //Set the state to false, so we don't go here again
-      this.setState({ boardData: temp_data, isFirstClick: false });
+      this.setState({ boardData: temp_data, isFirstClick: false, });
     }
 
     if (!temp_data[i][j].isRevealed) {
@@ -249,11 +268,13 @@ export class Board extends React.Component {
         game_status.isGameOver = true;
         game_status.isWon = false;
         temp_data = revealBoard(temp_data);
+        clearInterval(timer);
       }
       //Check winning condition, by checking if we have discovered all empty cells
       else if (isWon(temp_data)) {
         game_status.isGameOver = true;
         game_status.isWon = true;
+        clearInterval(timer);
       }
 
       let mines_remain = this.props.mines - getFlagsNum(temp_data);
@@ -312,12 +333,14 @@ export class Board extends React.Component {
             />
           )
         }
-        rows.push(<tr key={"r" + i}> {cell}</tr>)
+        rows.push(<tr key={"r" + i}>{cell}</tr>)
       }
 
       return (
         <table id="game-board">
-          {rows}
+          <tbody>
+            {rows}
+          </tbody>
         </table>
 
       );
@@ -333,9 +356,29 @@ export class Board extends React.Component {
       }
     }
 
+    /* adapted from https://stackoverflow.com/questions/5517597/plain-count-up-timer-in-javascript */
+    let renderTimer = () => {
+      let pad = (val) => {
+        var valString = val + "";
+        if (valString.length < 2) {
+          return "0" + valString;
+        } else {
+          return valString;
+        }
+      }
+
+      return (
+        <div id="timer">
+          <label> {pad(parseInt(this.state.totalSeconds / 60))}: </label>
+          <label>{pad(this.state.totalSeconds % 60)}</label>
+        </div>
+      );
+    }
+
     return (
       <div>
         {renderOverlay()}
+        {renderTimer()}
         {renderTable(this.state.boardData)}
         <div className="game-info">
           <span className="info">Mines remaining: {this.state.mineCount}</span>
