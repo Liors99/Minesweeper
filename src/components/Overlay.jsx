@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from "prop-types";
 
 export class Overlay extends React.Component {
     state = {
@@ -33,3 +34,8 @@ export class Overlay extends React.Component {
 
     }
 }
+
+Overlay.propTypes = {
+    boardRestart: PropTypes.func,
+    isWon: PropTypes.bool,
+};

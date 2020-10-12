@@ -1,6 +1,6 @@
 import React from "react";
 import { Cell } from "./cell";
-import { Overlay } from "./Overlay";
+import { Overlay } from "./overlay";
 import PropTypes from "prop-types";
 
 
