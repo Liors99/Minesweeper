@@ -1,6 +1,6 @@
 import React from "react";
 import { Cell } from "./cell";
-import { Menu } from "./menu";
+import { Overlay } from "./Overlay";
 import PropTypes from "prop-types";
 
 
@@ -20,20 +20,18 @@ export class Board extends React.Component {
     isFirstClick: true,
     clearCellsNum: (this.props.height * this.props.width) - this.props.mines,
     gameStatus: { isGameOver: false, isWon: false },
-    originalProps: { height: this.props.height, width: this.props.width, mines: this.props.mines },
     totalSeconds: 0,
   };
 
 
   restartGame() {
-
-    let old_props = this.state.originalProps;
+    let props = this.props;
     clearInterval(timer);
     this.setState({
-      boardData: this.initializeData(old_props.height, old_props.width),
-      mineCount: old_props.mines,
+      boardData: this.initializeData(props.height, props.width),
+      mineCount: props.mines,
       isFirstClick: true,
-      clearCellsNum: (old_props.height * old_props.width) - old_props.mines,
+      clearCellsNum: (props.height * props.width) - props.mines,
       gameStatus: { isGameOver: false, isWon: false },
       totalSeconds: 0,
     });
@@ -42,16 +40,7 @@ export class Board extends React.Component {
 
   componentDidUpdate(prevProps) {
     if (prevProps !== this.props) {
-      clearInterval(timer);
-      this.setState({
-        boardData: this.initializeData(this.props.height, this.props.width),
-        mineCount: this.props.mines,
-        isFirstClick: true,
-        clearCellsNum: (this.props.height * this.props.width) - this.props.mines,
-        gameStatus: { isGameOver: false, isWon: false },
-        originalProps: { height: this.props.height, width: this.props.width, mines: this.props.mines },
-        totalSeconds: 0,
-      });
+      this.restartGame();
     }
   }
 
@@ -349,7 +338,7 @@ export class Board extends React.Component {
     let renderOverlay = () => {
       const status = this.state.gameStatus
       if (status.isGameOver) {
-        return <Menu boardRestart={() => this.restartGame()} isWon={status.isWon} />
+        return <Overlay boardRestart={() => this.restartGame()} isWon={status.isWon} />
       }
       else {
         return null;

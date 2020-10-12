@@ -10,6 +10,7 @@ body {
 }
 
 .menu {
+  padding-top: 0.5em;
   display: flex;
   justify-content: center;
   margin-bottom: 0.5em;
@@ -25,7 +26,7 @@ body {
   margin: 5px;
   cursor: pointer;
   border-radius: 0.5em;
-  font-size:1em;
+  font-size:1.5em;
 }
 
 .menuButton:hover {
@@ -40,13 +41,14 @@ body {
   flex-wrap: wrap;
   align-items: center;
   color: white;
-  font-size: 16pt;
+  font-size: 1.5em;
 }
 
 .game-info {
   margin-bottom: 20px;
   text-align: center;
   color: rgb(255, 255, 255);
+  font-size: 1.5em;
 }
 
 .info {
@@ -60,7 +62,7 @@ body {
   border-collapse: separate;
 
   width: 100%;
-  max-width: 90vh;
+  max-width: 80vh;
 }
 
 
@@ -144,7 +146,7 @@ body {
   position: absolute;
   top: 50%;
   left: 50%;
-  font-size: 50px;
+  font-size: 2.5em;
   color: white;
   transform: translate(-50%,-50%);
   -ms-transform: translate(-50%,-50%);
