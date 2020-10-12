@@ -4,10 +4,6 @@ import { Overlay } from "./Overlay";
 import PropTypes from "prop-types";
 
 
-
-var dbg = console.log.bind(console, "DBG: ");
-
-
 //Global variable for the timer
 let timer = null;
 
@@ -68,7 +64,6 @@ export class Board extends React.Component {
 
     let temp_data = this.state.boardData;
 
-    dbg("Clicked on cell " + i + "," + j);
 
 
     //Gets the neighbours (all around) of a cell in position i,j uses a GENERATOR
@@ -138,7 +133,6 @@ export class Board extends React.Component {
           temp_data[i_mine][j_mine].isMine = true;
           mines_planted++;
 
-          dbg("Planted a mine at " + i_mine + ", " + j_mine);
         }
       }
 
@@ -289,7 +283,6 @@ export class Board extends React.Component {
   }
 
   placeFlag(i, j, data) {
-    dbg("Placing FLAG at " + i + "," + j);
     let mines_remain = this.state.mineCount;
 
     if (!data[i][j].isRevealed) {

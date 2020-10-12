@@ -1,7 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
 
-var dbg = console.log.bind(console, "DBG: ");
 let pressTimer;
 
 // Cell Class
