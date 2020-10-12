@@ -281,7 +281,10 @@ export class Board extends React.Component {
 
   handleRightClickCell(e, i, j, data) {
     e.preventDefault();
-    this.placeFlag(i, j, data);
+    if (e.button === 2) {
+      this.placeFlag(i, j, data);
+    }
+
 
   }
 
@@ -304,6 +307,13 @@ export class Board extends React.Component {
     this.setState({ boardData: data, mineCount: mines_remain });
   }
 
+
+  //Removes the menu that appears when you right click in the browser
+  removeContextMenu(e) {
+    e.preventDefault();
+    return false;
+  }
+
   render() {
 
     let renderTable = (data) => {
@@ -316,8 +326,9 @@ export class Board extends React.Component {
           cell.push(
             <Cell
               onClick={() => this.handleLeftClickCell(i, j)}
-              cMenu={(e) => this.handleRightClickCell(e, i, j, temp_data)}
-              onLongClick={() => this.placeFlag(i, j, temp_data)}
+              cMenu={(e) => this.removeContextMenu(e)}
+              rightClick={(e) => this.handleRightClickCell(e, i, j, temp_data)}
+              onLongTouch={() => { this.placeFlag(i, j, temp_data) }}
               value={temp_data[i][j]}
             />
           )

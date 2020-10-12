@@ -21,24 +21,28 @@ export class Cell extends React.Component {
     return value.neighbourMinesNum;
   }
 
-  onPress() {
+  /* Touch start and touch end functions are used for hold detection, taken from https://stackoverflow.com/questions/6139225/how-to-detect-a-long-touch-pressure-with-javascript-for-android-and-iphone */
+
+  touchstart() {
     if (!pressTimer) {
-      pressTimer = setTimeout(() => { console.log("HOLDING"); this.props.onLongClick(); }, 500);
+      pressTimer = setTimeout(() => { pressTimer = null; this.props.onLongTouch(); }, 1000);
     }
+
   }
 
-  onRelease() {
+  touchend() {
+    //stops short touches from firing the event
     if (pressTimer) {
-      clearTimeout(pressTimer);
+      clearTimeout(pressTimer); // clearTimeout, not cleartimeout..
+      pressTimer = null;
     }
-
   }
 
   render() {
-    const { value, onClick, cMenu } = this.props;
+    const { onClick, cMenu, rightClick, value } = this.props;
     const cell_class = "cell-content " + (value.isRevealed ? "" : "hidden");
     return (
-      <td onClick={onClick} className="cell" onContextMenu={cMenu} onTouchStart={this.onPress.bind(this)} onTouchEnd={this.onRelease}>
+      <td onClick={onClick} className="cell" onTouchStart={this.touchstart.bind(this)} onTouchEnd={this.touchend} onMouseDown={rightClick} onContextMenu={cMenu}>
         <div className={cell_class}>
           <div className="innerTable">
             <div className="innerTable-cell">
@@ -67,4 +71,9 @@ Cell.propTypes = {
   value: PropTypes.objectOf(PropTypes.shape(cellItemShape)),
   onClick: PropTypes.func,
   cMenu: PropTypes.func,
+  rightClick: PropTypes.func,
+  onLongTouch: PropTypes.func,
 };
+
+
+
