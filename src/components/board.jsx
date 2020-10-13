@@ -124,12 +124,20 @@ export class Board extends React.Component {
       }
 
       let mines_planted = 0;
+
+      //Get the neighbours cells to make sure that bombs are not placed as a neighbour
+      let neighbours = [];
+      for (let neighbour of getNeighbourCells(i, j, temp_data)) {
+        neighbours.push(neighbour);
+      }
+
       while (mines_planted < this.props.mines) {
         //Generate random i and j
         let i_mine = getRandomIntInclusive(0, temp_data.length - 1);
         let j_mine = getRandomIntInclusive(0, temp_data[0].length - 1);
 
-        if (i !== i_mine && j !== j_mine && !temp_data[i_mine][j_mine].isMine) {
+        //Make sure that the current current mine is not the current one and make sure that it has not been placed and make sure that it is not a neighbour
+        if (i !== i_mine && j !== j_mine && !temp_data[i_mine][j_mine].isMine && !neighbours.includes(temp_data[i_mine][j_mine])) {
           temp_data[i_mine][j_mine].isMine = true;
           mines_planted++;
 
