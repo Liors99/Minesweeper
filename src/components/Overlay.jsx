@@ -7,7 +7,9 @@ export class Overlay extends React.Component {
         isVisible: true
     }
 
+    //Handles what happens when we click on the overlay
     handleOnClick() {
+        //Restart the board and toggle its visibility
         this.props.boardRestart();
         this.setState({ isVisible: !this.state.isVisible });
     }

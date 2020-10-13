@@ -5,6 +5,7 @@ let pressTimer;
 
 // Cell Class
 export class Cell extends React.Component {
+  //Gets the value from the props (i.e. what to display)
   getValue() {
     const { value } = this.props;
 
@@ -56,7 +57,6 @@ export class Cell extends React.Component {
   }
 }
 
-// Type checking With PropTypes
 const cellItemShape = {
   i: PropTypes.numer,
   j: PropTypes.numer,

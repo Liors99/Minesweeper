@@ -19,7 +19,7 @@ export class Board extends React.Component {
     totalSeconds: 0,
   };
 
-
+  //Restarts the game by resetting the state to default (happens when the game ends)
   restartGame() {
     let props = this.props;
     clearInterval(timer);
@@ -34,12 +34,14 @@ export class Board extends React.Component {
 
   }
 
+  //Checks when a component has updated its props (built in method) and restarts the game if the props have changed (happens when user changes difficulty)
   componentDidUpdate(prevProps) {
     if (prevProps !== this.props) {
       this.restartGame();
     }
   }
 
+  //Initializes the data array with default objects (i.e. empty cells)
   initializeData(height, width) {
     let data = [];
 
@@ -113,6 +115,7 @@ export class Board extends React.Component {
 
     }
 
+    //Populates the board with mines
     let populateMines = (i, j, data) => {
       let temp_data = data;
 
@@ -148,6 +151,7 @@ export class Board extends React.Component {
 
     }
 
+    //Assigns numbers to cells based on the number of neighbouring mines
     let assignNumbers = (data) => {
 
       let temp_data = data;
@@ -193,6 +197,7 @@ export class Board extends React.Component {
       return data;
     }
 
+    //Reveals the entire board
     let revealBoard = (data) => {
       for (let i = 0; i < data.length; i++) {
         for (let j = 0; j < data[i].length; j++) {
@@ -203,6 +208,7 @@ export class Board extends React.Component {
       return data;
     }
 
+    //Gets the total number of flags active in the game (i.e. how many are currently placed)
     let getFlagsNum = (data) => {
       let num = 0;
 
@@ -217,6 +223,7 @@ export class Board extends React.Component {
       return num;
     }
 
+    //Checks if the user has won the game by comparing the total number of cells revealed vs number of mines
     let isWon = (data) => {
 
       let revealed_so_far = 0;
@@ -231,6 +238,7 @@ export class Board extends React.Component {
       return this.state.clearCellsNum === revealed_so_far;
     }
 
+    //Updates the timer by 1 second (callback function)
     let updateTimer = () => {
       let new_timer = this.state.totalSeconds + 1;
 
@@ -250,6 +258,7 @@ export class Board extends React.Component {
       this.setState({ boardData: temp_data, isFirstClick: false, });
     }
 
+    //What happens if the data is NOT revealed
     if (!temp_data[i][j].isRevealed) {
       temp_data = revealArea(i, j, temp_data);
       let game_status = this.state.gameStatus;
@@ -265,6 +274,7 @@ export class Board extends React.Component {
       else if (isWon(temp_data)) {
         game_status.isGameOver = true;
         game_status.isWon = true;
+        temp_data = revealBoard(temp_data);
         clearInterval(timer);
       }
 
@@ -277,7 +287,9 @@ export class Board extends React.Component {
 
   }
 
+  //Handles what happens when we right click on a cell, requires the event e as well as the position and data
   handleRightClickCell(e, i, j, data) {
+    //Checks if the event is of type 2 (right click), and if so, places a flag at that position
     e.preventDefault();
     if (e.button === 2) {
       this.placeFlag(i, j, data);
@@ -286,7 +298,9 @@ export class Board extends React.Component {
 
   }
 
+  //Places a flag at position i,j
   placeFlag(i, j, data) {
+    //Flags the cell as flagged and decremens the mine count in the state by 1 for every flag placed
     let mines_remain = this.state.mineCount;
 
     if (!data[i][j].isRevealed) {
@@ -313,6 +327,7 @@ export class Board extends React.Component {
 
   render() {
 
+    //Renders the table by spawning cells and putting them in a <tr>
     let renderTable = (data) => {
       let temp_data = data;
 
@@ -343,6 +358,7 @@ export class Board extends React.Component {
       );
     }
 
+    //Renders the overlay
     let renderOverlay = () => {
       const status = this.state.gameStatus
       if (status.isGameOver) {
@@ -386,7 +402,6 @@ export class Board extends React.Component {
   }
 }
 
-// Type checking With PropTypes
 Board.propTypes = {
   height: PropTypes.number,
   width: PropTypes.number,
