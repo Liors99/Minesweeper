@@ -267,10 +267,6 @@ export class Board extends React.Component {
 
     }
 
-
-
-
-
   }
 
   handleRightClickCell(e, i, j, data) {

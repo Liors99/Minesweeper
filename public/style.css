@@ -34,6 +34,11 @@ body {
   background: black;
 }
 
+.menuButton-select {
+  color: white;
+  background: black;
+}
+
 #timer{
   display: flex;
   justify-content: center;
