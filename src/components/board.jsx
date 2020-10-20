@@ -177,8 +177,8 @@ export class Board extends React.Component {
 
     //Recursively reveals every non empty connecting cell
     let revealArea = (i, j, data) => {
-      //If it is a mine or has already been revealed, "skip"
-      if (data[i][j].isMine || data[i][j].isRevealed) {
+      //If it is a mine, flagged, or has already been revealed, "skip"
+      if (data[i][j].isMine || data[i][j].isRevealed || data[i][j].isFlagged) {
       }
       //If it has a number on it, reveal it, but nothing else beside it and make sure it is no longer flagged
       else if (data[i][j].neighbourMinesNum > 0) {
@@ -223,6 +223,18 @@ export class Board extends React.Component {
       return num;
     }
 
+
+    //Clears all the flags from the board
+    let clearFlags = (data) => {
+      for (let i = 0; i < data.length; i++) {
+        for (let j = 0; j < data[i].length; j++) {
+          data[i][j].isFlagged = false;
+        }
+      }
+
+      return data;
+    }
+
     //Checks if the user has won the game by comparing the total number of cells revealed vs number of mines
     let isWon = (data) => {
 
@@ -248,10 +260,13 @@ export class Board extends React.Component {
 
     //When we click on a cell for the first time, we need to populate the mines and assign numbers to cells
     if (this.state.isFirstClick) {
+
       //populate mines
       temp_data = populateMines(i, j, temp_data);
       //assign numbers to cells
       temp_data = assignNumbers(temp_data);
+      //Remove all placed flags
+      temp_data = clearFlags(temp_data);
       //Update the global timer every second
       timer = setInterval(updateTimer, 1000);
       //Set the state to false, so we don't go here again
@@ -260,6 +275,11 @@ export class Board extends React.Component {
 
     //What happens if the data is NOT revealed
     if (!temp_data[i][j].isRevealed) {
+      //Check if we have clicked on a flag, and if we did it, unflag it
+      if (temp_data[i][j].isFlagged) {
+        temp_data[i][j].isFlagged = false;
+      }
+
       temp_data = revealArea(i, j, temp_data);
       let game_status = this.state.gameStatus;
 
